@@ -1,0 +1,104 @@
+{
+    "name": "auto-posthtml",
+    "displayName": "Auto Posthtml",
+    "description": "posthtml autofix plugins",
+    "version": "0.0.1",
+    "publisher": "ctf0",
+    "repository": "",
+    "engines": {
+        "vscode": "^1.51.0"
+    },
+    "categories": [
+        "Other"
+    ],
+    "activationEvents": [
+        "onCommand:autopos.format"
+    ],
+    "main": "./extension.js",
+    "contributes": {
+        "commands": [
+            {
+                "command": "autopos.format",
+                "title": "Auto PostHtml"
+            }
+        ],
+        "configuration": {
+            "type": "object",
+            "title": "Laravel Goto Controller",
+            "properties": {
+                "auto-posthtml.schemes": {
+                    "type": "string",
+                    "default": "http://schema.org/",
+                    "description": "https://www.npmjs.com/package/posthtml-schemas#url"
+                },
+                "auto-posthtml.removeDuplicates": {
+                    "type": "string",
+                    "default": "style",
+                    "description": "https://www.npmjs.com/package/posthtml-remove-duplicates#api"
+                },
+                "auto-posthtml.favIcon": {
+                    "type": "obj",
+                    "default": {
+                        "outDir": "dist",
+                        "configuration": {
+                            "path": "icons"
+                        }
+                    },
+                    "minItems": 1,
+                    "uniqueItems": true,
+                    "description": "https://www.npmjs.com/package/posthtml-favicons#options"
+                },
+                "auto-posthtml.lazyLoad": {
+                    "type": "obj",
+                    "default": {
+                        "loading": "lazy",
+                        "class": "lazyload"
+                    },
+                    "minItems": 1,
+                    "uniqueItems": true,
+                    "description": "https://www.npmjs.com/package/posthtml-lazyload#options"
+                },
+                "auto-posthtml.noReferrer": {
+                    "type": "array",
+                    "default": [
+                        "noopener",
+                        "noreferrer",
+                        "nofollow"
+                    ],
+                    "items": {
+                        "type": "string"
+                    },
+                    "minItems": 1,
+                    "uniqueItems": true,
+                    "description": "https://www.npmjs.com/package/posthtml-link-noreferrer#options"
+                }
+            }
+        }
+    },
+    "scripts": {
+        "lint": "eslint .",
+        "pretest": "yarn run lint",
+        "test": "node ./test/runTest.js"
+    },
+    "devDependencies": {
+        "@types/glob": "^7.1.3",
+        "@types/mocha": "^8.0.4",
+        "@types/node": "^14.14.7",
+        "@types/vscode": "^1.51.0",
+        "eslint": "^7.13.0",
+        "glob": "^7.1.6",
+        "mocha": "^8.2.1",
+        "typescript": "^4.0.5",
+        "vscode-test": "^1.4.1"
+    },
+    "dependencies": {
+        "posthtml": "^0.13.4",
+        "posthtml-alt-always": "^1.0.1",
+        "posthtml-aria-tabs": "^1.0.0",
+        "posthtml-favicons": "^1.4.0",
+        "posthtml-lazyload": "^1.0.8",
+        "posthtml-link-noreferrer": "^1.0.8",
+        "posthtml-remove-duplicates": "^0.0.4",
+        "posthtml-schemas": "^1.0.0"
+    }
+}
