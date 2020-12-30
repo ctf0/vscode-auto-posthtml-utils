@@ -4,6 +4,7 @@ const posthtml = require('posthtml')
 const PACKAGE_NAME = 'autoPosthtml'
 let config = {}
 let fileTypes = []
+let enabledPlugins = []
 
 /**
  * @param {vscode.ExtensionContext} context
@@ -25,17 +26,41 @@ async function activate(context) {
 
             if (fileTypes.some((e) => e == doc.languageId)) {
                 let html = doc.getText()
-                let ws = vscode.workspace.workspaceFolders[0]?.uri.fsPath
+                let arr = []
 
-                let res = await posthtml([
-                    require('posthtml-aria-tabs')(),
-                    require('posthtml-schemas')(config.schemas),
-                    require('posthtml-alt-always')(),
-                    require('posthtml-remove-duplicates')(config.removeDuplicates),
-                    require('posthtml-lazyload')(config.lazyLoad),
-                    require('posthtml-link-noreferrer')({attr: config.noReferrer}),
-                    require('posthtml-attrs-sorter')({order: config.attrSort})
-                ]).process(html)
+                for (const item of enabledPlugins) {
+                    switch (item) {
+                        case 'altAlways':
+                            arr.push(require('posthtml-alt-always')())
+                            break
+
+                        case 'ariaTabs':
+                            arr.push(require('posthtml-aria-tabs')())
+                            break
+
+                        case 'schemes':
+                            arr.push(require('posthtml-schemas')(config.schemas))
+                            break
+
+                        case 'removeDuplicates':
+                            arr.push(require('posthtml-remove-duplicates')(config.removeDuplicates))
+                            break
+
+                        case 'lazyLoad':
+                            arr.push(require('posthtml-lazyload')(config.lazyLoad))
+                            break
+
+                        case 'noReferrer':
+                            arr.push(require('posthtml-link-noreferrer')({attr: config.noReferrer}))
+                            break
+
+                        case 'attrSort':
+                            arr.push(require('posthtml-attrs-sorter')({order: config.attrSort}))
+                            break
+                    }
+                }
+
+                let res = await posthtml(arr).process(html)
 
                 return activeEditor.edit(
                     (edit) => edit.replace(
@@ -54,6 +79,9 @@ async function activate(context) {
 async function readConfig() {
     config = await vscode.workspace.getConfiguration(PACKAGE_NAME)
     fileTypes = config.fileTypes
+
+    let plugins = config.togglePlugins
+    enabledPlugins = Object.keys(plugins).filter((item) => plugins[item])
 }
 
 exports.activate = activate
