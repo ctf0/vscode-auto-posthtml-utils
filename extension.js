@@ -1,10 +1,11 @@
-const vscode = require('vscode')
+const vscode   = require('vscode')
 const posthtml = require('posthtml')
 
-const PACKAGE_NAME = 'autoPosthtml'
-let config = {}
-let fileTypes = []
-let enabledPlugins = []
+const PACKAGE_NAME  = 'autoPosthtml'
+let config          = {}
+let fileTypes       = []
+let enabledPlugins  = []
+let selfClosingTags = []
 
 /**
  * @param {vscode.ExtensionContext} context
@@ -22,11 +23,11 @@ async function activate(context) {
         vscode.commands.registerCommand('aph.format', async () => {
 
             const activeEditor = vscode.window.activeTextEditor
-            let doc = activeEditor?.document
+            let doc            = activeEditor?.document
 
             if (fileTypes.some((e) => e == doc.languageId)) {
                 let html = doc.getText()
-                let arr = []
+                let arr  = []
 
                 for (const item of enabledPlugins) {
                     switch (item) {
@@ -60,7 +61,7 @@ async function activate(context) {
                     }
                 }
 
-                let res = await posthtml(arr).process(html)
+                let res = await posthtml(arr).process(html, {closingSingleTag: 'slash', singleTags: selfClosingTags})
 
                 return activeEditor.edit(
                     (edit) => edit.replace(
@@ -77,10 +78,11 @@ async function activate(context) {
 }
 
 async function readConfig() {
-    config = await vscode.workspace.getConfiguration(PACKAGE_NAME)
-    fileTypes = config.fileTypes
+    config          = await vscode.workspace.getConfiguration(PACKAGE_NAME)
+    fileTypes       = config.fileTypes
+    selfClosingTags = config.selfClosingTags
 
-    let plugins = config.togglePlugins
+    let plugins    = config.togglePlugins
     enabledPlugins = Object.keys(plugins).filter((item) => plugins[item])
 }
 
