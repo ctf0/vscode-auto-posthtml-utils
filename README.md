@@ -22,5 +22,6 @@ run any/all of posthtml plugins on your file in one go,
 
 ## Issues
 
-- cant have double quotes inside double quotes
-    > ex.`class="{{ isset($one) ? "$one." : 'test' }}"`
+- cant have nested quotes of same type, ex.
+    > `class="{{ "$var" }}"`  
+    > `alt='{{ __('test') }}'`
